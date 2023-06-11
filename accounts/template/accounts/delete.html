@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+Delete user
+{% endblock %}
+
+{% block header %}
+Delete user
+{% endblock %}
+
+{% block content %}
+    <form method="post" class="d-flex flex-column justify-content-center align-items-center" style="flex-grow: 0.75">
+        <div class="d-flex align-items-center mb-5">
+            <a href="{{ request.META.HTTP_REFERER }}">
+                <img src="/media/icons/back.png" alt="back" class="me-3 back-arrow"></a>
+            <h1 class="text-danger">Are you sure to delete the account?</h1>
+        </div>
+        {% csrf_token %}
+        <div class="form-floating mb-3 w-25">
+            {% render_field form.delete placeholder="Type ""delete"" to confirm" class="form-control form-field" id="delete" %}
+            <label for="delete">Type "delete" to confirm</label>
+        </div>
+        <div class="d-flex">
+            <a href="{{ request.META.HTTP_REFERER }}"
+               class="text-decoration-none submit rounded-pill ms-auto me-3" style="color: var(--banner-color)">Cancel</a>
+            <input type="submit" name="confirmed" value="Confirm" class="submit delete rounded-pill me-auto ms-3">
+        </div>
+    </form>
+{% endblock %}

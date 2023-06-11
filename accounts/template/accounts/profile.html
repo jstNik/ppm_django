@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if account == request.user %}
+        Your profile
+    {% else %}
+        {{ account.username }}'s profile
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    <div class="d-flex align-items-center mt-4 mb-5">
+        <a href="{% if request.GET.source %}{{ request.GET.source }}{% else %}{% url 'articles:list' %}{% endif %}">
+            <img src="/media/icons/back.png" alt="back" class="me-3 back-arrow"></a>
+        <h1>{% if account == user %}Your profile{% else %}{{ account.username }}'s profile{% endif %}</h1>
+    </div>
+    <div class="d-flex">
+        <div class="me-5">
+            <img src="{% if account.profile_picture %}{{ account.profile_picture.url }}{% else %}/media/pfps/default.png{% endif %}" alt="Profile picture"
+                 style="max-height: 300px; max-width: 300px; aspect-ratio: 1; border: 3px var(--banner-color) solid"
+                 class="rounded-circle mb-3">
+            {% if account.last_login %}
+                <p class=" d-flex justify-content-center mb-2 fs-6">Last
+                    login: {{ account.last_login|date:'d M Y' }} at {{ account.last_login|time:'H:i' }}</p>
+            {% endif %}
+            <p class=" d-flex justify-content-center mb-5 fs-6"> Joined: {{ account.date_joined|date:'d M Y' }}
+                at {{ account.date_joined|time:'H:i' }}</p>
+            {% if account == user or user.is_superuser %}
+                <div class="d-flex flex-column align-items-center mt-3">
+                    <a href="{% if accout == user %}{% url 'accounts:edit_your_profile' %}{% else %}{% url 'accounts:edit' username=account.username %}{% endif %}{% if request.GET.source %}?source={{ request.GET.source }}{% endif %}"
+                       style="text-decoration: none; color: var(--banner-color); font-weight: 600" class="fst-italic fs-4 mb-4">
+                        {% if account == user %}Edit your profile{% else %}Edit {{ account.username }}'s profile{% endif %}</a>
+                    <a href="{% if accout == user %}{% url 'accounts:delete_your_profile' %}{% else %}{% url 'accounts:delete' username=account.username %}{% endif %}{% if request.GET.source %}?source={{ request.GET.source }}{% endif %}"
+                       style="text-decoration: none; color: var(--banner-color); font-weight: 600" class="fst-italic fs-4">Delete the account</a>
+                </div>
+            {% endif %}
+        </div>
+        <div class="d-flex flex-column">
+            <div class="d-flex align-items-end mb-3">
+                <img src="/media/icons/id-card.png" alt="Name" title="Name" class="black-to-banner-color me-3"
+                     style="width: 30px; height: 30px">
+                <p class="fs-4">
+                    {% if not account.first_name and not account.last_name %}
+                        {% if user == account %}
+                            <a href {% url 'accounts:edit_your_profile' %}
+                               class="text-decoration-none fst-italic" style="color: var(--banner-color); opacity: 0.5">Add
+                                your
+                                name...
+                            </a>
+                        {% else %}
+                            <span class="fs-4" style="opacity: 0.5">No first name</span>
+                        {% endif %}
+                    {% else %}
+                        {% if account.first_name %}{{ account.first_name }}{% else %}
+                            {% if user == account %}
+                                <a href {% url 'accounts:edit_your_profile' %}
+                                   class="text-decoration-none fst-italic"
+                                   style="color: var(--banner-color); opacity: 0.5">
+                                    Add first name...
+                                </a>
+                            {% else %}
+                                <span class="fs-4" style="opacity: 0.5">No first name</span>
+                            {% endif %}{% endif %}
+                        {% if account.last_name %}{{ account.last_name }}{% else %}
+                            {% if user == account %}
+                                <a href {% url 'accounts:edit_your_profile' %}
+                                   class="text-decoration-none fst-italic"
+                                   style="color: var(--banner-color); opacity: 0.5">
+                                    Add last name...
+                                </a>
+                            {% else %}
+                                <span class="fs-4" style="opacity: 0.5">No last name</span>
+                            {% endif %}
+                        {% endif %}
+                        </p>
+                        {% if account.first_name and account.last_name %}
+                            <p class="fs-4">{{ account.first_name }} {{ account.last_name }}</p>
+                        {% endif %}
+                    {% endif %}
+            </div>
+            <div class="d-flex align-items-end mt-3 mb-3">
+                <img src="/media/icons/user.png" alt="Username" title="Username" style="height: 30px; width: 30px"
+                     class="black-to-banner-color me-3">
+                <p class="fs-4">{{ account.username }}</p>
+            </div>
+
+            <div class="d-flex align-items-end mt-3 mb-3">
+                <img src="/media/icons/arroba-sign.png" alt="Email" title="Email" style="width: 30px; height: 30px"
+                     class="black-to-banner-color me-3">
+                <p class="fs-4">{{ account.email }}</p>
+            </div>
+            <div class="d-flex align-items-baseline mt-3 mb-3">
+                <img src="/media/icons/cake.png" alt="Birthday" title="Birthday"
+                     class="black-to-banner-color me-3"
+                     style="width: 30px; height: 30px">
+                {% if account.birthday %}
+                    <p class="fs-4">{{ account.birthday|date:'d M Y' }}</p>
+                {% else %}
+                    {% if account == user %}
+                        <a href="{% url 'accounts:edit_your_profile' %}" class="fs-4 fst-italic text-decoration-none"
+                           style="opacity: 0.5; color: var(--banner-color)">Add
+                            birthday...</a>
+                    {% else %}
+                        <p class="fs-4" style="opacity: 0.5">No birthday</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+                <div class="d-flex mt-3 mb-3">
+                    <img src="/media/icons/profile.png" alt="Bio" title="Bio" class="black-to-banner-color me-3"
+                         style="width: 30px; height: 30px;">
+                    {% if account.bio %}
+                        <p style="border: 1px var(--banner-color) solid" class="rounded p-2">{{ account.bio }}</p>
+                    {% else %}
+                        {% if account == user %}
+                            <a href="{% url 'accounts:edit_your_profile' %}"
+                               class="fs-4 fst-italic text-decoration-none"
+                               style="opacity: 0.5; color: var(--banner-color)">Add
+                                bio...</a>
+                        {% else %}
+                            <p class="fs-4" style="opacity: 0.5">No bio</p>
+                        {% endif %}
+                    {% endif %}
+                </div>
+        </div>
+    </div>
+    {% if articles and account != user %}
+        <h1 class="h3 mt-5 mb-4">{{ account.username }}'s articles</h1>
+        <ul class="d-flex flex-column mw-75">
+            {% for article in articles %}
+                <li class="pt-3 pb-3 list-element">
+                <div class="d-flex">
+                    <h1 class="h3">
+                        <a href="
+                                {% url 'articles:details' pk=article.pk slug=article.slug %}{% if request.GET.source %}?source={{ request.GET.source }}&{% else %}?{% endif %}path={{ request.path }}"
+                           class="list-title">{{ article.title }}</a></h1>
+                    {% if user.is_superuser %}
+                        <a href="{% url 'articles:edit' pk=article.pk slug=article.slug %}?source={% if request.GET.source %}{{ request.GET.source }}{% else %}{{ request.path }}{% endif %}"
+                           class="ms-auto">
+                            <img src="/media/icons/edit.png" class="black-to-banner-color"
+                                 style="height: 20px; width: auto"
+                                 alt="Edit">
+                        </a>
+                        <a href="{% url 'articles:delete' pk=article.pk slug=article.slug %}?source={{ request.path }}"
+                           class="ms-2">
+                            <img src="/media/icons/delete.png" class="black-to-banner-color"
+                                 style="height: 20px; width: auto" alt="Delete">
+                        </a>
+                    {% endif %}
+                </div>
+                <p style="font-weight: 500; font-size: 1.1rem" class="mb-2">{{ article.body | truncatewords:35 }}</p>
+                <span class="fst-italic">
+                Posted: {{ article.postingDate|date:'d M Y' }} at {{ article.postingDate|time:'H:i' }}
+                    {% if article.isEdited %}
+                        <br>
+                        Last edit {{ article.lastEditDate|date:'d M Y' }} at {{ article.lastEditDate|time:'H:i' }}
+                    {% endif %}
+            </span>
+            {% endfor %}
+        </ul>
+    {% endif %}
+{% endblock %}

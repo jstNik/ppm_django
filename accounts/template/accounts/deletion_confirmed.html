@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Deletion confirmed
+{% endblock %}
+
+{% block content %}
+    <form method="post" class="d-flex flex-column justify-content-center align-items-center" style="flex-grow: 0.75">
+        {% csrf_token %}
+        <h1 class="text-danger mb-5">Your account has been deleted</h1>
+        <a href="{% url 'articles:list' %}" class="submit rounded-pill mb-5 text-decoration-none"
+           style="color: var(--banner-color)">
+            Ok</a>
+    </form>
+{% endblock %}
