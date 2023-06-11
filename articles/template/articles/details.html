@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %} {{ article.title }} {% endblock %}
+
+
+{% block content %}
+    <div class="d-flex align-content-center mt-5 mb-3">
+        <a href="{% if request.GET.path %}{{ request.GET.path }}{% if request.GET.source %}?source={{ request.GET.source }}{% endif %}{% else %}{% url 'articles:list' %}{% endif %}"
+           class="d-flex align-items-center me-3">
+            <img src="/media/icons/back.png" alt="Go back" class="back-arrow"></a>
+        <h1 class="h3 mb-0 me-auto">{{ article.title }}</h1>
+        {% if article.author == user or user.is_superuser %}
+            <a href="{% url 'articles:edit' pk=article.pk slug=article.slug %}{% if request.GET.source %}?source={{ request.GET.source }}{% if request.GET.path %}&path={{ request.GET.path }}{% endif %}{% elif request.GET.path %}?path={{ request.GET.path }}{% endif %}">
+                <img src="/media/icons/edit.png" class="black-to-banner-color" style="height: 20px; width: auto"
+                     alt="Edit">
+            </a>
+            <a href="{% url 'articles:delete' pk=article.pk slug=article.slug %}{% if request.GET.source %}?source={{ request.GET.source }}{% if request.GET.path %}&path={{ request.GET.path }}{% endif %}{% elif request.GET.path %}?path={{ request.GET.path }}{% endif %}">
+                <img src="/media/icons/delete.png" class="black-to-banner-color ms-2"
+                     style="height: 20px; width: auto" alt="Delete">
+            </a>
+        {% endif %}
+    </div>
+    <p class="mt-3 mb-3" style="font-size: 1.1rem">{{ article.body }}</p>
+    <div class="d-flex ms-auto mb-4">
+    {% if article.author %}
+        <a href="{% if user != article.author %}{% url 'accounts:profile' username=article.author.username%}{% else %}{% url 'accounts:your_profile' %}{% endif %}?source={{ request.path }}">
+    {% endif %}
+            <img src="{% if article.author and article.author.profile_picture %}{{ article.author.profile_picture.url }}{% else %}/media/pfps/default.png{% endif %}"
+                class="rounded-pill me-2" style="width: 48px; height: 48px; aspect-ratio: 1; border: 2px var(--banner-color) solid"
+                alt="{{ article.author.username }}'s picture" title="{{ article.author.username }}'s picture">
+    {% if article.author %}
+        </a>
+    {% endif %}
+    <p class="ms-auto fst-italic">
+        {% if article.author %}
+        <a href="{% url 'accounts:profile' username=article.author.username %}" style="text-decoration: none; color:var(--banner-color)">{{ article.author }}</a> {% else %} <span style="color: var(--banner-color)">Deleted user </span>{% endif %}
+        - {{ article.postingDate|date:'d M Y' }} at {{ article.postingDate|time:'H:i' }}
+        {% if article.isEdited %}
+            <br>
+            Last edit {{ article.lastEditDate|date:'d M Y' }} at {{ article.lastEditDate|time:'H:i' }}
+        {% endif %}
+    </p></div>
+    <h1 class="h3 mb-4">Comments</h1>
+    <form method="post" class="position-relative d-flex align-items-end mb-4">
+        {% csrf_token %}
+        {% render_field form.body placeholder="Add a comment..." class+="form-control form-field add-comment pe-4" style+="overflow-y: hidden" %}
+        <button type="submit" class="position-absolute d-flex justify-content-center send-comment-btn">
+            <img src="/media/icons/send-message.png" alt="Send comment"
+                 class="black-to-banner-color send-comment-img"></button>
+    </form>
+
+    <ul>
+        {% for comment, edit_form in comments  %}
+            <li class="d-flex flex-column mt-2 mb-2 items">
+                <div class="d-flex align-items-center" style="font-size: 0.8rem">
+                    {% if comment.author %}
+                        <a href="{% if user == comment.author %}{% url 'accounts:your_profile' %}{% else %}{% url 'accounts:profile' username=comment.author.username %}{% endif %}">
+                    {% endif %}
+                            <img src="{% if comment.author.profile_picture %}{{ comment.author.profile_picture.url }}{% else %}/media/pfps/default.png{% endif %}"
+                                 alt="Profile picture"
+                                 title="{{ comment.author.username }}'s profile picture"
+                                 style="height: 40px; width: 40px; aspect-ratio: 1; border: 1px var(--banner-color) solid"
+                                 class="me-2 rounded-circle">
+                    {% if comment.author %}
+                        </a>
+                    {% endif %}
+                <span class="fst-italic">
+                    {% if comment.author %}
+                        <a href="{% if user == comment.author %}{% url 'accounts:your_profile' %}{% else %}{% url 'accounts:profile' username=comment.author.username %}{% endif %}"
+                               style="color: var(--banner-color)"
+                               class="text-decoration-none">{{ comment.author }}</a>
+                    {% else %}
+                        <span style="color: var(--banner-color)">Deleted user</span>
+                    {% endif %}
+                     - {{ comment.postingDate|date:'d M Y' }} at {{ comment.postingDate|time:'H:i' }}
+                    {% if comment.isEdited %}
+                        <br>
+                        Last edit {{ comment.lastEditingDate|date:'d M Y' }} at {{ comment.lastEditingDate|time:'H:i' }}
+                    {% endif %}</span>
+                    {% if user == comment.author or user.is_superuser %}
+                        <button type="button" class="ms-auto border-0 p-0 edit-btn" id="edit-btn-{{ forloop.counter0 }}">
+                            <img src="/media/icons/edit.png" class="black-to-banner-color ms-auto"
+                                 style="height: 20px; width: auto" alt="Edit">
+                        </button>
+                        <form action="{% url 'comments:delete' %}" method="post">
+                            {% csrf_token %}
+                            {% render_field edit_form.pk class+="d-none" %}
+                            <button type="submit" class="ms-2 border-0 p-0 delete-btn">
+                                <img src="/media/icons/delete.png" class="black-to-banner-color"
+                                     style="height: 20px; width: auto" alt="Delete">
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+                <div>
+                    <p class="ms-5" id="comment-body-{{ forloop.counter0 }}">{{ comment.body }}</p>
+                    <form method="post" class="align-items-end position-relative" style="display: none"
+                          id="edit-form-{{ forloop.counter0 }}">
+                        {% csrf_token %}
+                        {% render_field edit_form.pk class+="d-none" %}
+                        {% render_field edit_form.body class+="form-control form-field add-comment pe-4 ms-5" style+="overflow-y: hidden; border-bottom:0" %}
+                        <button type="submit" class="position-absolute d-flex justify-content-center send-comment-btn">
+                            <img src="/media/icons/send-message.png" alt="Send comment"
+                                 class="black-to-banner-color send-comment-img"></button>
+                    </form>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let txt = document.getElementsByTagName("textarea")
+            let list = document.getElementsByClassName('items')
+            for (let i = 0; i < txt.length; i++) {
+                txt[i].style.height = "auto"
+                txt[i].style.height = txt[i].scrollHeight + 'px'
+                txt[i].addEventListener('input', () => {
+                    console.log('hi')
+                    txt[i].style.height = "auto"
+                    txt[i].style.height = txt[i].scrollHeight + 'px'
+                })
+                txt[i].addEventListener('keypress', (e)=>{
+                    if (e.key === 'Enter'){
+                        txt[i].parentElement.querySelector('button').click()
+                    }
+                })
+            }
+            for( let i = 0; i < list.length; i++){
+                if(document.getElementById(`edit-btn-${i}`)) {
+                    let editForm = document.getElementById(`edit-form-${i}`)
+                    let textArea = editForm.querySelector('textarea')
+                    document.getElementById(`edit-btn-${i}`).addEventListener('click', () => {
+                        if (document.getElementById(`comment-body-${i}`).style.display !== 'none') {
+                            document.getElementById(`comment-body-${i}`).style.display = 'none'
+                            editForm.style.display = 'flex'
+                            textArea.style.height = "auto"
+                            textArea.style.height = textArea.scrollHeight + "px"
+                            textArea.focus();
+                            textArea.selectionStart = textArea.value.length
+                        } else {
+                            document.getElementById(`comment-body-${i}`).style.display = 'flex'
+                            editForm.style.display = 'none'
+                        }
+                    })
+                }
+            }
+        })
+    </script>
+
+{% endblock %}

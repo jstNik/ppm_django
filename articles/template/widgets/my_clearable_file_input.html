@@ -1,0 +1,23 @@
+{% if widget.is_initial %}
+    {% if widget.initial_text %}
+        <span>{{ widget.initial_text }}</span>
+    {% endif %}
+    {% if widget.show_image_link %}
+        <a href="{{ widget.value.url }}">{{ widget.value }}</a>
+    {% endif %}
+    {% if not widget.required %}
+        <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}"
+                {% if widget.attrs.disabled %}
+                    disabled
+                {% endif %}>
+        {% if widget.clear_checkbox_label %}
+            <label for="{{ widget.checkbox_id }}">{{ widget.clear_checkbox_label }}</label>
+            <br>
+        {% endif %}
+    {% endif %}
+    {% if widget.input_text %}
+        <span>{{ widget.input_text }}</span>
+    {% endif %}
+{% endif %}
+
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>

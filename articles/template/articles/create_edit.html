@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block title %} Add a new article {% endblock %}
+
+{% block content %}
+    <div class="d-flex align-items-center mt-4">
+            <a href="{{ request.META.HTTP_REFERER }}">
+                <img src="/media/icons/back.png" alt="back" class="me-3 back-arrow"></a>
+            <h1>Create an article</h1>
+        </div>
+    <form method="post"
+          class="d-flex position-relative flex-grow flex-column justify-content-evenly" style="flex-grow: 0.75">
+        {% csrf_token %}
+        {% render_field form.title placeholder="Title" class+="form-control form-field" style="flex-grow: 0.03" %}
+        {% render_field form.body placeholder="Body" class+="form-control form-field" style="flex-grow: 0.5"%}
+        <input type="submit" value="Submit" alt="Submit" src="/media/arrow-34-32.png" class="submit rounded-pill">
+    </form>
+
+{% endblock %}

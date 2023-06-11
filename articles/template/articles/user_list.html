@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %} Your articles {% endblock %}
+
+
+
+{% block content %}
+    <div class="d-flex align-items-center mt-4">
+            <a href="{% if request.GET.source %}{{ request.GET.source }}{% else %}{% url 'articles:list' %}{% endif %}">
+                <img src="/media/icons/back.png" alt="back" class="me-3 back-arrow"></a>
+            <h1>Your articles</h1>
+        </div>
+    <ul class="d-flex flex-column mw-75">
+        {% for article in articles %}
+            <li class="pt-3 pb-3 list-element">
+            <div class="d-flex">
+                <h1 class="h3">
+                    <a href="{% url 'articles:details' pk=article.pk slug=article.slug %}{% if request.GET.source %}?source={{ request.GET.source }}&{% else %}?{% endif %}path={{ request.path }}"
+                       class="list-title">{{ article.title }}</a></h1>
+                <a href="{% url 'articles:edit' pk=article.pk slug=article.slug %}?source={% if request.GET.source %}{{ request.GET.source }}{% else %}{{ request.path }}{% endif %}" class="ms-auto">
+                    <img src="/media/icons/edit.png" class="black-to-banner-color" style="height: 20px; width: auto"
+                         alt="Edit">
+                </a>
+                <a href="{% url 'articles:delete' pk=article.pk slug=article.slug %}?source={{ request.path }}"
+                    class="ms-2">
+                    <img src="/media/icons/delete.png" class="black-to-banner-color"
+                         style="height: 20px; width: auto" alt="Delete">
+                </a>
+            </div>
+            <p style="font-weight: 500; font-size: 1.1rem" class="mb-2" >{{ article.body | truncatewords:35 }}</p>
+            <span class="fst-italic">
+                Posted: {{ article.postingDate|date:'d M Y' }} at {{ article.postingDate|time:'H:i' }}
+                {% if article.isEdited %}
+                    <br>
+                    Last edit {{ article.lastEditDate|date:'d M Y' }} at {{ article.lastEditDate|time:'H:i' }}
+                {% endif %}
+            </span>
+        {% endfor %}
+    </ul>
+{% endblock %}

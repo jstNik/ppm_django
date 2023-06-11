@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %} Articles {% endblock %}
+
+{% block content %}
+    <h1 class="mt-4 mb-2">New posts</h1>
+    <ul class="d-flex flex-column mw-75">
+        {% for article in articles %}
+            <li class="pt-3 pb-3 list-element">
+                <h1 class="h3">
+                    <a href="{% url 'articles:details' pk=article.pk slug=article.slug %}?source={{ request.path }}"
+                       class="list-title">{{ article.title }}
+                    </a>
+                </h1>
+                <p style="font-weight: 500; font-size: 1.1rem">{{ article.body | truncatewords:35 }}</p>
+                <div class="d-flex align-items-center fst-italic mt-2">
+                    {% if article.author %}
+                        <a href="{% url 'accounts:profile' username=article.author.username %}"
+                           style=" color: var(--banner-color);"
+                           class="text-decoration-none">
+                            <img src="{% if article.author.profile_picture %}{{ article.author.profile_picture.url }}
+                                      {% else %}/media/pfps/default.png{% endif %}"
+                                 alt="{{ article.author.username }}'s profile picture"
+                                 title="{{ article.author.username }}'s profile picture" class="rounded-circle me-2"
+                                 style="border: 2px var(--banner-color) solid; width: 48px; height: 48px; aspect-ratio: 1">
+
+                        </a>
+                    {% else %}
+                        <img src="/media/pfps/default.png" alt="Deleted user's profile picture"
+                             title="Deleted user's profile picture"
+                             class="rounded-circle me-2"
+                             style="border: 2px var(--banner-color) solid; width: 48px; height: 48px; aspect-ratio: 1">
+                    {% endif %}
+                    <div class="d-flex flex-column">
+                        <div class="d-flex">
+                            {% if article.author %}
+                                <a href="{% url 'accounts:profile' username=article.author.username %}"
+                                   style=" color: var(--banner-color);"
+                                   class="text-decoration-none">
+                                    {{ article.author.username }}
+                                </a>
+                            {% else %}
+                                <span>Deleted user</span>
+                            {% endif %}
+                            <span> - {{ article.postingDate|date:'d M Y' }} at {{ article.postingDate|time:'H:i' }}</span>
+                        </div>
+                        {% if article.isEdited %}
+                            <span>{{ article.lastEditDate|date:'d M Y' }} at {{ article.lastEditDate|time:'H:i' }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
