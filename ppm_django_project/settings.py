@@ -56,7 +56,7 @@ MIDDLEWARE = [
 
 CSRF_TRUSTED_ORIGINS = [
     'https://ppmdjango-production.up.railway.app',
-    '127.0.0.1'
+    'http://127.0.0.1'
 ]
 
 ROOT_URLCONF = 'ppm_django_project.urls'
