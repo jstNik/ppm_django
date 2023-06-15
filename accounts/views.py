@@ -5,7 +5,7 @@ from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, UpdateView
 from django.contrib.auth.forms import *
 from django.contrib.auth import login, logout
-from accounts.forms import AccountSignupForm, DeletionForm, AccountEditForm
+from accounts.forms import AccountSignupForm, DeletionForm, AccountEditForm, LoginForm
 from accounts.models import Account
 from articles.models import Article
 
@@ -30,21 +30,29 @@ class AccountSignupView(TemplateView):
         return render(request, self.template_name, {'form': form})
 
 
+# noinspection PyBroadException
 class AccountLoginView(TemplateView):
     template_name = 'accounts/login.html'
 
     def get(self, request, *args, **kwargs):
-        form = AuthenticationForm()
+        form = LoginForm()
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
-        form = AuthenticationForm(data=request.POST)
+        try:
+            username = Account.objects.get(email=request.POST.get('username')).username
+            data = request.POST.copy()
+            data['username'] = username
+            form = AuthenticationForm(data=data)
+        except:
+            form = AuthenticationForm(data=request.POST)
         if form.is_valid():
             login(request, form.get_user())
             if 'next' in request.GET:
                 return redirect(request.GET.get('next'))
             else:
                 return redirect('articles:list')
+        form = LoginForm(initial={'username': request.POST.get('username')}, data=request.POST)
         return render(request, self.template_name, {'form': form})
 
 

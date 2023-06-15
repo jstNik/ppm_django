@@ -1,7 +1,6 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
-from string import Template
-
+from django.utils.translation import gettext_lazy as _
 from django.forms import ClearableFileInput
 from django.utils.safestring import mark_safe
 from accounts.models import Account
@@ -17,6 +16,16 @@ class RemoveFreeText(ClearableFileInput):
     input_text = None
     clear_checkbox_label = None
     show_image_link = False
+
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(required=True, label="Username or email")
+    error_messages = {
+        "invalid_login": _(
+            "Please enter a correct username/email and password."
+        ),
+        "inactive": _("This account is inactive."),
+    }
 
 
 class AccountEditForm(forms.ModelForm):
