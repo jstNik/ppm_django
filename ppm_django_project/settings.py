@@ -54,10 +54,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://ppmdjango-production.up.railway.app'
-]
-
 ROOT_URLCONF = 'ppm_django_project.urls'
 
 TEMPLATES = [
