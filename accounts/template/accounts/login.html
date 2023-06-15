@@ -1,19 +1,40 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
+{% load extra_tags %}
 
 {% block title %} Log In {% endblock %}
 
 {% block content %}
-    <form method="post" class="d-flex flex-column align-items-center justify-content-center" style="flex-grow: 1">
+    <form method="post" class="d-flex flex-column align-items-center justify-content-center needs-validation"
+          style="flex-grow: 1"
+          aria-describedby="form-errors"
+          novalidate>
         {% csrf_token %}
-        <div class="form-floating mb-3 w-25">
-            {% render_field form.username placeholder="Username" class+="form-control form-field" id="username" %}
-            <label for="username">Username</label>
-        </div>
-        <div class="form-floating mb-3 w-25">
-            {% render_field form.password placeholder="Password" class+="form-control form-field" id="password" %}
-            <label for="password">Password</label>
-        </div>
+        {% for field in form %}
+            <div class="form-floating {% if form.non_field_errors %} is-invalid" aria-describedby="error-forms"{% else %}mb-3"{% endif %} style="width: 30%">
+                {% if not field.errors and not form.non_field_errors %}
+                    {% render_field field placeholder=field.label class+="form-control form-field" id=field.label %}
+                    <label for="{{ field.label }}">{{ field.label }}</label>
+                {% else %}
+                    {% with "invalid-"|addstr:field.label as aria %}
+                        {% render_field field placeholder=field.label class+="form-control form-field is-invalid" id=field.label aria-describedby=aria %}
+                    {% endwith %}
+                    <label for="{{ field.label }}">{{ field.label }}</label>
+                    <div id="invalid-{{ field.label }}" class="invalid-feedback">
+                        {% for error in field.errors %}
+                            {{ error }} <br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {% if form.non_field_errors %}
+            <div id="error-forms" class="invalid-feedback mb-3" style="width: 30%">
+                {% for error in form.non_field_errors %}
+                    {{ error }} <br>
+                {% endfor %}
+            </div>
+    {% endif %}
         <div class="d-flex mb-3">
         <input type="submit" value="Login" class="submit rounded-pill ms-auto me-2">
         <a href="{% url 'accounts:signup' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}"
