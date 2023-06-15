@@ -54,6 +54,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+CORS_ALLOWED_ORIGINS = [
+    'https://ppmdjango-production.up.railway.app',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://ppmdjango-production.up.railway.app'
+]
+
 ROOT_URLCONF = 'ppm_django_project.urls'
 
 TEMPLATES = [
@@ -114,7 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Rome'
 
 DATETIME_FORMAT = 'd M Y H:i'
 
