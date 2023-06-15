@@ -54,10 +54,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'https://ppmdjango-production.up.railway.app',
-]
-
 CSRF_TRUSTED_ORIGINS = [
     'https://ppmdjango-production.up.railway.app'
 ]
