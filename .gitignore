@@ -1,0 +1,5 @@
+/accounts/migrations/
+/articles/migrations/
+/comments/migrations/
+/db.sqlite3
+/venv/
