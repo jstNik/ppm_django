@@ -14,7 +14,9 @@
             <h1 class="h3 mb-0">{{ article.title }}</h1>
             <p class="mt-3 mb-3" style="font-size: 1.1rem">{{ article.body|truncatechars:3000 }}</p>
             <div class="d-flex mt-5">
-                <button type="button" class="rounded-pill submit ms-auto text-decoration-none me-4" onclick="window.history.back()">Cancel</button>
+                <button type="button" class="rounded-pill submit ms-auto text-decoration-none me-4" onclick="window.history.back()">
+                    Cancel
+                </button>
                 <input type="submit" name="confirmed" value="Confirm" class="rounded-pill submit me-auto ms-4 delete">
             </div>
         </form>

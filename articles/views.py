@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.utils.text import slugify
 from django.views.generic import TemplateView, DeleteView
 
@@ -56,7 +56,7 @@ class ArticleDetailsView(TemplateView):
 
 
 class ArticleCreationView(LoginRequiredMixin, TemplateView):
-    login_url = 'accounts:login'
+    login_url = reverse_lazy('accounts:login')
     redirect_field_name = 'next'
     template_name = 'articles/create_edit.html'
 
@@ -71,13 +71,13 @@ class ArticleCreationView(LoginRequiredMixin, TemplateView):
             post.author = request.user
             post.slug = slugify(request.POST.get('title'))
             post.save()
-            return redirect('articles:list')
+            return redirect(reverse('articles:list'))
         else:
             return render(request, self.template_name, {'form': form})
 
 
 class UserArticlesListView(LoginRequiredMixin, TemplateView):
-    login_url = 'accounts:login'
+    login_url = reverse_lazy('accounts:login')
     redirect_field_name = 'next'
     template_name = 'articles/user_list.html'
 
@@ -87,7 +87,7 @@ class UserArticlesListView(LoginRequiredMixin, TemplateView):
 
 
 class EditArticleView(LoginRequiredMixin, TemplateView):
-    login_url = 'accounts:login'
+    login_url = reverse_lazy('accounts:login')
     redirect_field_name = 'next'
     template_name = 'articles/create_edit.html'
 
@@ -97,7 +97,7 @@ class EditArticleView(LoginRequiredMixin, TemplateView):
             form = forms.ArticleForm(instance=article)
             return render(request, self.template_name, {'form': form, 'article': article})
         else:
-            return redirect('articles:details', pk=article.pk, slug=article.slug)
+            return redirect(reverse('articles:details'), pk=article.pk, slug=article.slug)
 
     def post(self, request, *args, **kwargs):
         article = Article.objects.get(pk=self.kwargs.get('pk'))
@@ -112,15 +112,15 @@ class EditArticleView(LoginRequiredMixin, TemplateView):
                         article.body = request.POST.get('body')
                     article.isEdited = True
                     article.save()
-                    return redirect('articles:details', pk=article.pk, slug=article.slug)
-            return redirect('articles:details', pk=article.pk, slug=article.slug)
+                    return redirect(reverse('articles:details'), pk=article.pk, slug=article.slug)
+            return redirect(reverse('articles:details'), pk=article.pk, slug=article.slug)
         else:
-            return redirect('articles:details', pk=article.pk, slug=article.slug)
+            return redirect(reverse('articles:details'), pk=article.pk, slug=article.slug)
 
 
 class DeleteArticleView(LoginRequiredMixin, DeleteView):
     model = Article
-    login_url = 'accounts:login'
+    login_url = reverse_lazy('accounts:login')
     redirect_field_name = 'next'
     template_name = 'articles/delete.html'
 
@@ -128,19 +128,10 @@ class DeleteArticleView(LoginRequiredMixin, DeleteView):
         article = Article.objects.get(pk=self.kwargs.get('pk'))
         if article.author == request.user or request.user.is_superuser:
             return super().get(self, request, *args, **kwargs)
-        return redirect('articles:details', pk=article.pk, slug=article.slug)
+        return redirect(reverse('articles:details'), pk=article.pk, slug=article.slug)
 
-    def get_success_url(self, delete_is_canceled=False):
+    def get_success_url(self):
         source = self.request.GET.get('source')
-        path = self.request.GET.get('path')
-        if path and delete_is_canceled:
-            return path + '?source=' + source + '&path=' + path
         if source:
             return source
-        return 'articles:list'
-
-    def post(self, request, *args, **kwargs):
-        if request.POST.get('confirmed'):
-            return super().post(self, request, args, kwargs)
-        else:
-            return redirect(self.get_success_url(delete_is_canceled=True))
+        return reverse('articles:list')

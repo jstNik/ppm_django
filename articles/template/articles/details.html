@@ -7,14 +7,15 @@
 {% block content %}
     <div class="d-flex align-content-center mt-5 mb-3">
         <button type="button" class="border-0 p-0 me-3" style="background: transparent" onclick="window.history.back()">
-            <img src="/media/icons/back.png" alt="Go back" class="back-arrow"></button>
+            <img src="/media/icons/back.png" alt="Go back" class="back-arrow">
+        </button>
         <h1 class="h3 mb-0 me-auto">{{ article.title }}</h1>
         {% if article.author == user or user.is_superuser %}
             <a href="{% url 'articles:edit' pk=article.pk slug=article.slug %}">
                 <img src="/media/icons/edit.png" class="black-to-banner-color" style="height: 20px; width: auto"
                      alt="Edit">
             </a>
-            <a href="{% url 'articles:delete' pk=article.pk slug=article.slug %}">
+            <a href="{% url 'articles:delete' pk=article.pk slug=article.slug %}{% if request.GET.source %}?source={{ request.GET.source }}{% endif %}">
                 <img src="/media/icons/delete.png" class="black-to-banner-color ms-2"
                      style="height: 20px; width: auto" alt="Delete">
             </a>

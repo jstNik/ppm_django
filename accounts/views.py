@@ -3,7 +3,7 @@ from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
 from django.views.generic import TemplateView, UpdateView
-from django.contrib.auth.forms import *
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout
 from accounts.forms import AccountSignupForm, DeletionForm, AccountEditForm, LoginForm
 from accounts.models import Account
@@ -26,7 +26,7 @@ class AccountSignupView(TemplateView):
             login(request, account)
             if request.GET.get('next'):
                 return redirect(request.GET.get('next'))
-            return redirect('articles:list')
+            return redirect(reverse('articles:list'))
         return render(request, self.template_name, {'form': form})
 
 
@@ -51,7 +51,7 @@ class AccountLoginView(TemplateView):
             if 'next' in request.GET:
                 return redirect(request.GET.get('next'))
             else:
-                return redirect('articles:list')
+                return redirect(reverse('articles:list'))
         form = LoginForm(initial={'username': request.POST.get('username')}, data=request.POST)
         return render(request, self.template_name, {'form': form})
 
@@ -60,11 +60,11 @@ class AccountLogoutView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         logout(request)
-        return redirect('articles:list')
+        return redirect(reverse('articles:list'))
 
     def post(self, request, *args, **kwargs):
         logout(request)
-        return redirect('articles:list')
+        return redirect(reverse('articles:list'))
 
 
 class AccountProfileView(TemplateView):
@@ -98,7 +98,7 @@ class AccountEditView(LoginRequiredMixin, UpdateView):
         if self.kwargs.get('username'):
             if self.kwargs.get('username') == request.user.username or request.user.is_superuser:
                 return super().get(self, request, *args, **kwargs)
-            return redirect('accounts:profile', username=self.kwargs.get('username'))
+            return redirect(reverse('accounts:profile'), username=self.kwargs.get('username'))
         return super().get(self, request, *args, **kwargs)
 
     def get_object(self, queryset=None):
@@ -110,19 +110,18 @@ class AccountEditView(LoginRequiredMixin, UpdateView):
         if self.kwargs.get('username'):
             if self.kwargs.get('username') == request.user or request.user.is_superuser:
                 return super().post(self, request, *args, **kwargs)
-            return redirect('accounts:profile', username=self.kwargs.get('username'))
+            return redirect(reverse('accounts:profile'), username=self.kwargs.get('username'))
         return super().post(self, request, *args, **kwargs)
 
 
 class AccountChangePassword(LoginRequiredMixin, PasswordChangeView):
     template_name = 'accounts/change_password.html'
-    login_url = 'accounts:login'
-    redirect_field_name = 'next'
-    success_url = 'articles:list'
+    login_url = reverse_lazy('accounts:login')
+    success_url = reverse_lazy('accounts:your_profile')
 
 
 class AccountDeleteView(LoginRequiredMixin, TemplateView):
-    login_url = 'account:login'
+    login_url = reverse_lazy('account:login')
     redirect_field_name = 'next'
     template_name = 'accounts/delete.html'
 
@@ -131,7 +130,7 @@ class AccountDeleteView(LoginRequiredMixin, TemplateView):
         if self.kwargs.get('username'):
             if self.kwargs.get('username') == request.user.username or request.user.is_superuser:
                 return render(request, self.template_name, {'form': form})
-            return redirect('accounts:profile', username=self.kwargs.get('username'))
+            return redirect(reverse('accounts:profile'), username=self.kwargs.get('username'))
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
@@ -140,9 +139,9 @@ class AccountDeleteView(LoginRequiredMixin, TemplateView):
             if form.is_valid():
                 user = Account.objects.get(pk=request.user.pk)
                 user.delete()
-                return redirect('accounts:deletion-confirmed')
+                return redirect(reverse('accounts:deletion-confirmed'))
             return render(request, self.template_name, {'form': form})
-        return redirect('accounts:your_profile')
+        return redirect(reverse('accounts:your_profile'))
 
 
 class AccountDeletionConfirmedView(TemplateView):

@@ -16,13 +16,13 @@
             <li class="pt-3 pb-3 list-element">
             <div class="d-flex">
                 <h1 class="h3">
-                    <a href="{% url 'articles:details' pk=article.pk slug=article.slug %}"
+                    <a href="{% url 'articles:details' pk=article.pk slug=article.slug %}?source={{ request.path }}"
                        class="list-title">{{ article.title }}</a></h1>
                 <a href="{% url 'articles:edit' pk=article.pk slug=article.slug %}" class="ms-auto">
                     <img src="/media/icons/edit.png" class="black-to-banner-color" style="height: 20px; width: auto"
                          alt="Edit">
                 </a>
-                <a href="{% url 'articles:delete' pk=article.pk slug=article.slug %}"
+                <a href="{% url 'articles:delete' pk=article.pk slug=article.slug %}?source={{ request.path }}"
                     class="ms-2">
                     <img src="/media/icons/delete.png" class="black-to-banner-color"
                          style="height: 20px; width: auto" alt="Delete">
