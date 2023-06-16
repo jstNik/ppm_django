@@ -3,7 +3,6 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.utils.text import slugify
 from django.views.generic import TemplateView, DeleteView
-
 from comments.models import Comment
 from comments.forms import AddCommentForm, EditCommentForm
 from .models import Article
