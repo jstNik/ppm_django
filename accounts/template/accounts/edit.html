@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 {% load static %}
+{% load extra_tags %}
 
 
 {% block title %} Edit profile {% endblock %}
@@ -13,7 +14,6 @@
             <img src="/media/icons/back.png" alt="back" class="me-3 back-arrow"></a>
         <h1>{% if user == account.username %}Edit your profile{% else %}Edit {{ account.username }}'s profile{% endif %}</h1>
     </div>
-
     <div class="d-flex position-relative" style="flex-grow: 1">
         <div class="d-flex flex-column align-items-center me-5">
             <div class="position-relative">
@@ -38,45 +38,123 @@
             <img src="/media/icons/id-card.png" alt="Name" title="Name" class="black-to-banner-color me-3"
                  style="width: 30px; height: 30px">
             <div class="form-floating me-auto" style="flex-grow: 0.48">
-                {% render_field form.first_name placeholder="First name" class+="form-control form-field me-3" id="first_name" %}
-                <label for="first-name">First name</label>
+                {% if not form.first_name.errors %}
+                    {% render_field form.first_name placeholder=form.first_name.label class+="form-control form-field me-3" id=form.first_name.id_for_label %}
+                {% else %}
+                    {% with "invalid-"|addstr:form.first_name.id_for_label as aria %}
+                        {% render_field form.first_name placeholder=form.first_name.label class+="form-control form-field me-3 is-invalid" id=form.first_name.id_for_label aria-describedby=aria %}
+                    {% endwith %}
+                {% endif %}
+                <label for={{ form.first_name.id_for_label }}>{{ form.first_name.label }}</label>
+                {% if form.first_name.id_for_label %}
+                    <div id="invalid-{{ form.first_name.id_for_label }}" class="invalid-feedback position-absolute">
+                        {% for error in form.first_name.errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
             <div class="form-floating ms-auto" style="flex-grow: 0.48">
-                {% render_field form.last_name placeholder="Last name" class+="form-control form-field me-3" id="last_name" %}
-                <label for="last-name">Last name</label>
+                {% if not form.last_name.errors %}
+                    {% render_field form.last_name placeholder=form.last_name.label class+="form-control form-field me-3" id=form.last_name.id_for_label %}
+                {% else %}
+                    {% with "invalid-"|addstr:form.last_name.id_for_label as aria %}
+                        {% render_field form.last_name placeholder=form.last_name.label class+="form-control form-field me-3 is-invalid" id=form.last_name.id_for_label aria-describedby=aria %}
+                    {% endwith %}
+                {% endif %}
+                <label for={{ form.last_name.id_for_label }}>{{ form.last_name.label }}</label>
+                {% if form.last_name.id_for_label %}
+                    <div id="invalid-{{ form.last_name.id_for_label }}" class="invalid-feedback position-absolute">
+                        {% for error in form.last_name.errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         </div>
-        <div  class="d-flex align-items-center mb-4">
+        <div class="d-flex align-items-center mb-4">
             <img src="/media/icons/user.png" alt="Username" title="Username" style="height: 30px; width: 30px"
                  class="black-to-banner-color me-3">
-            <div class="form-floating"  style="flex-grow: 1">
-                {% render_field form.username placeholder="Username" class+="form-control form-field" id="username" %}
-                <label for="username">Username</label>
+            <div class="form-floating" style="flex-grow: 1">
+                {% if not form.username.errors %}
+                    {% render_field form.username placeholder=form.username.label class+="form-control form-field me-3" id=form.username.id_for_label %}
+                {% else %}
+                    {% with "invalid-"|addstr:form.username.id_for_label as aria %}
+                        {% render_field form.username placeholder=form.username.label class+="form-control form-field me-3 is-invalid" id=form.username.id_for_label aria-describedby=aria %}
+                    {% endwith %}
+                {% endif %}
+                <label for={{ form.username.id_for_label }}>{{ form.username.label }}</label>
+                {% if form.username.id_for_label %}
+                    <div id="invalid-{{ form.username.id_for_label }}" class="invalid-feedback position-absolute">
+                        {% for error in form.username.errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         </div>
-        <div  class="d-flex align-items-center mb-4">
+        <div class="d-flex align-items-center mb-4">
             <img src="/media/icons/arroba-sign.png" alt="Email" title="Email" style="width: 30px; height: 30px"
                  class="black-to-banner-color me-3">
-            <div class="form-floating"  style="flex-grow: 1">
-                {% render_field form.email placeholder="Email" class+="form-control form-field" id="email" %}
-                <label for="email">Email</label>
+            <div class="form-floating" style="flex-grow: 1">
+                {% if not form.email.errors %}
+                    {% render_field form.email placeholder=form.email.label class+="form-control form-field me-3" id=form.email.id_for_label %}
+                {% else %}
+                    {% with "invalid-"|addstr:form.email.id_for_label as aria %}
+                        {% render_field form.email placeholder=form.email.label class+="form-control form-field me-3 is-invalid" id=form.email.id_for_label aria-describedby=aria %}
+                    {% endwith %}
+                {% endif %}
+                <label for={{ form.email.id_for_label }}>{{ form.email.label }}</label>
+                {% if form.email.id_for_label %}
+                    <div id="invalid-{{ form.email.id_for_label }}" class="invalid-feedback position-absolute">
+                        {% for error in form.email.errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         </div>
-        <div  class="d-flex align-items-center mb-4">
+        <div class="d-flex align-items-center mb-4">
             <img src="/media/icons/cake.png" alt="Birthday" title="Birthday"
                  class="black-to-banner-color me-3"
                  style="width: 30px; height: 30px">
-            <div class="form-floating"  style="flex-grow: 1">
-                {% render_field form.birthday placeholder="Birthday" class+="form-control form-field" id="birthday" %}
-                <label for="birthday">Birthday</label>
+            <div class="form-floating" style="flex-grow: 1">
+                {% if not form.birthday.errors %}
+                    {% render_field form.birthday placeholder=form.birthday.label class+="form-control form-field me-3" id=form.birthday.id_for_label %}
+                {% else %}
+                    {% with "invalid-"|addstr:form.birthday.id_for_label as aria %}
+                        {% render_field form.birthday placeholder=form.birthday.label class+="form-control form-field me-3 is-invalid" id=form.birthday.id_for_label %}
+                    {% endwith %}
+                {% endif %}
+                <label for={{ form.birthday.id_for_label }}>{{ form.birthday.label }}</label>
+                {% if form.birthday.id_for_label %}
+                    <div id="invalid-{{ form.birthday.id_for_label }}" class="invalid-feedback position-absolute">
+                        {% for error in form.birthday.errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         </div>
-        <div  class="d-flex align-items-start mb-4">
+        <div class="d-flex align-items-start mb-4">
             <img src="/media/icons/profile.png" alt="Bio" title="Bio" class="black-to-banner-color me-3"
                  style="width: 30px; height: 30px;">
-            <div class="form-floating"  style="flex-grow: 1">
-                {% render_field form.bio placeholder="Bio" class+="form-control form-field" id="bio" style="height: auto" %}
-                <label for="bio">Bio</label>
+            <div class="form-floating" style="flex-grow: 1">
+                {% if not form.bio.errors %}
+                    {% render_field form.bio placeholder=form.bio.label class+="form-control form-field me-3" id=form.bio.id_for_label %}
+                {% else %}
+                    {% with "invalid-"|addstr:form.bio.id_for_label as aria %}
+                        {% render_field form.bio placeholder=form.bio.label class+="form-control form-field me-3 is-invalid" id=form.bio.id_for_label %}
+                    {% endwith %}
+                {% endif %}
+                <label for={{ form.bio.id_for_label }}>{{ form.bio.label }}</label>
+                {% if form.bio.id_for_label %}
+                    <div id="invalid-{{ form.bio.id_for_label }}" class="invalid-feedback position-absolute">
+                        {% for error in form.bio.errors %}
+                            {{ error }}<br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
         </div>
         {% render_field form.profile_picture id="browse" class="d-none" %}

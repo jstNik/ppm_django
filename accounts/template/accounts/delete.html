@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
+{% load extra_tags %}
 
 {% block title %}
 Delete user
@@ -18,8 +19,21 @@ Delete user
         </div>
         {% csrf_token %}
         <div class="form-floating mb-3 w-25">
-            {% render_field form.delete placeholder="Type ""delete"" to confirm" class="form-control form-field" id="delete" %}
+            {% if not form.delete.errors %}
+                {% render_field form.delete placeholder="Type ""delete"" to confirm" class="form-control form-field" id=form.delete.id_for_label %}
+            {% else %}
+                {% with "invalid-"|addstr:form.delete.id_for_label as aria %}
+                    {% render_field form.delete placeholder="Type ""delete"" to confirm" class="form-control form-field is-invalid" id=form.delete.id_for_label aria-describedby=aria %}
+                {% endwith %}
+            {% endif %}
             <label for="delete">Type "delete" to confirm</label>
+            {% if form.delete.errors %}
+                <div id="invalid-{{ form.delete.id_for_labels }}" class="invalid-feedback">
+                    {% for error in form.delete.errors %}
+                        {{ error }}<br>
+                    {% endfor %}
+                </div>
+            {% endif %}
         </div>
         <div class="d-flex">
             <a href="{{ request.META.HTTP_REFERER }}"

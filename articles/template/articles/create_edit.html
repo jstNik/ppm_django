@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load widget_tweaks %}
 {% load static %}
+{% load extra_tags %}
 
 {% block title %} Add a new article {% endblock %}
 
@@ -13,8 +14,34 @@
     <form method="post"
           class="d-flex position-relative flex-grow flex-column justify-content-evenly" style="flex-grow: 0.75">
         {% csrf_token %}
-        {% render_field form.title placeholder="Title" class+="form-control form-field" style="flex-grow: 0.03" %}
-        {% render_field form.body placeholder="Body" class+="form-control form-field" style="flex-grow: 0.5"%}
+        {% if not form.title.errors %}
+            {% render_field form.title placeholder=form.title.label class+="form-control form-field" style="flex-grow: 0.03" %}
+        {% else %}
+            {% with "invalid-"|addstr:form.title.id_for_label as aria %}
+                {% render_field form.title placeholder=form.title.label class+="form-control form-field" style="flex-grow: 0.03" id=form.title.id_for_label aria-describedby=aria %}
+            {% endwith %}
+        {% endif %}
+        {% if form.title.errors %}
+            <div id="{{ form.title.id_for_label }}" class="invalid-feedback">
+                {% for error in form.title.errors %}
+                    {{ error }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if not form.body.errors %}
+            {% render_field form.body placeholder=form.body.label class+="form-control form-field" style="flex-grow: 0.03" %}
+        {% else %}
+            {% with "invalid-"|addstr:form.body.id_for_label as aria %}
+                {% render_field form.body placeholder=form.body.label class+="form-control form-field" style="flex-grow: 0.03" id=form.body.id_for_label aria-describedby=aria %}
+            {% endwith %}
+        {% endif %}
+        {% if form.body.errors %}
+            <div id="{{ form.body.id_for_label }}" class="invalid-feedback">
+                {% for error in form.body.errors %}
+                    {{ error }}<br>
+                {% endfor %}
+            </div>
+        {% endif %}
         <input type="submit" value="Submit" alt="Submit" src="/media/arrow-34-32.png" class="submit rounded-pill">
     </form>
 

@@ -2,7 +2,6 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.forms import ClearableFileInput
-from django.utils.safestring import mark_safe
 from accounts.models import Account
 
 
@@ -36,15 +35,60 @@ class AccountEditForm(forms.ModelForm):
         model = Account
         fields = ['first_name', 'last_name', 'username', 'email', 'bio', 'birthday', 'profile_picture']
 
+    def clean_first_name(self):
+        data = self.cleaned_data.get('first_name')
+        if not data:
+            return data
+        temp_data = data.replace("'", "")
+        if temp_data.isalpha():
+            return data
+        else:
+            raise forms.ValidationError('Only apostrophe is allowed as special character.')
+
+    def clean_last_name(self):
+        data = self.cleaned_data.get('last_name')
+        if not data:
+            return data
+        temp_data = data.replace("'", "")
+        if temp_data.isalpha():
+            return data
+        else:
+            raise forms.ValidationError('Only apostrophe is allowed as special character.')
+
 
 class AccountSignupForm(UserCreationForm):
     birthday = forms.DateField(required=False, widget=DateInput)
     profile_picture = forms.ImageField(required=False)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].help_text = \
+            'Your password must contain at least 8 characters and can’t be entirely numeric.'
+
     class Meta:
         model = Account
         fields = [
             'first_name', 'last_name', 'username', 'email', 'password1', 'password2', 'birthday', 'profile_picture']
+
+    def clean_first_name(self):
+        data = self.cleaned_data.get('first_name')
+        if not data:
+            return data
+        temp_data = data.replace("'", "")
+        if temp_data.isalpha():
+            return data
+        else:
+            raise forms.ValidationError('Only apostrophe is allowed as special character.')
+
+    def clean_last_name(self):
+        data = self.cleaned_data.get('last_name')
+        if not data:
+            return data
+        temp_data = data.replace("'", "")
+        if temp_data.isalpha():
+            return data
+        else:
+            raise forms.ValidationError('Only apostrophe is allowed as special character.')
 
 
 class DeletionForm(forms.Form):
