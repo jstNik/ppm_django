@@ -25,7 +25,9 @@
                  alt="Profile picture" style="height: 300px; aspect-ratio: 1; width: 300px; border: 3px var(--banner-color) solid;"
                  class="rounded-circle mb-3" id="pfp"></div>
             <button type="button" style="border: 0; padding: 0; color: var(--banner-color); max-width: fit-content; background: transparent; font-weight: 600"
-                    class="fst-italic fs-4 mb-5" id="remove-pfp">Remove profile picture</button>
+                    class="fst-italic fs-4 mb-5" id="remove-pfp">
+                {% if account.profile_picture %}Remove profile picture{% endif %}
+            </button>
             <a href="{% url 'accounts:change_password' %}"
                class="fs-4 fst-italic" style="color: var(--banner-color); text-decoration: none; font-weight: 600">
                 Change password</a>
@@ -167,7 +169,7 @@
     pfp = document.getElementById('pfp')
     pfpLink = document.getElementById('pfp').src
     browse = document.getElementById('browse')
-    datePicker = document.getElementById('birthday')
+    datePicker = document.getElementById('id_birthday')
 
     browse.addEventListener('change', () => {
         let reader = new FileReader()
@@ -176,12 +178,16 @@
         }
         reader.readAsDataURL(browse.files[0])
         clearButton.checked = false
+        button.textContent = 'Remove profile picture'
     })
 
     button.addEventListener('click', () => {
         if (button.textContent === 'Remove profile picture') {
             clearButton.checked = true
-            button.textContent = 'Restore profile picture'
+            if (pfpLink !==  window.location.protocol + '//' + window.location.host + '/media/pfps/default.png')
+                button.textContent = 'Restore profile picture'
+            else
+                button.textContent = ''
             pfp.src = '/media/pfps/default.png'
         } else {
             browse.value = null
