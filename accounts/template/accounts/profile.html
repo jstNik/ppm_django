@@ -30,7 +30,7 @@
                     <a href="{% if account == user %}{% url 'accounts:edit_your_profile' %}{% else %}{% url 'accounts:edit' username=account.username %}{% endif %}"
                        style="text-decoration: none; color: var(--banner-color); font-weight: 600" class="fst-italic fs-4 mb-4">
                         {% if account == user %}Edit your profile{% else %}Edit {{ account.username }}'s profile{% endif %}</a>
-                    <a href="{% if accout == user %}{% url 'accounts:delete_your_profile' %}{% else %}{% url 'accounts:delete' username=account.username %}{% endif %}"
+                    <a href="{% if account == user %}{% url 'accounts:delete_your_profile' %}{% else %}{% url 'accounts:delete' username=account.username %}{% endif %}"
                        style="text-decoration: none; color: var(--banner-color); font-weight: 600" class="fst-italic fs-4">Delete the account</a>
                 </div>
             {% endif %}
