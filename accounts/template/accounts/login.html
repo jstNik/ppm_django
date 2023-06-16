@@ -5,13 +5,19 @@
 {% block title %} Log In {% endblock %}
 
 {% block content %}
-    <form method="post" class="d-flex flex-column align-items-center justify-content-center needs-validation"
-          style="flex-grow: 1"
+    <form method="post" class="d-flex flex-column align-items-center justify-content-center w-25 ms-auto me-auto needs-validation"
+          style="flex-grow: 1;"
           aria-describedby="form-errors"
           novalidate>
         {% csrf_token %}
+        <div class="d-flex align-items-center me-auto mt-4 mb-5">
+            <button type="button" class="border-0 p-0 me-3" style="background: transparent" onclick="window.history.back()">
+                <img src="/media/icons/back.png" alt="back" class="back-arrow">
+            </button>
+            <h1>Login</h1>
+        </div>
         {% for field in form %}
-            <div class="form-floating {% if form.non_field_errors %} is-invalid" aria-describedby="error-forms"{% else %}mb-3"{% endif %} style="width: 30%">
+            <div class="form-floating w-100 ms-auto me-auto {% if form.non_field_errors %} is-invalid" aria-describedby="error-forms"{% else %}mb-3"{% endif %}>
                 {% if not field.errors and not form.non_field_errors %}
                     {% render_field field placeholder=field.label class+="form-control form-field" id=field.label %}
                     <label for="{{ field.label }}">{{ field.label }}</label>
@@ -29,7 +35,7 @@
             </div>
         {% endfor %}
         {% if form.non_field_errors %}
-            <div id="error-forms" class="invalid-feedback mb-3" style="width: 30%">
+            <div id="error-forms" class="invalid-feedback w-100 ms-auto me-auto mb-3">
                 {% for error in form.non_field_errors %}
                     {{ error }} <br>
                 {% endfor %}
@@ -42,4 +48,5 @@
             Signup</a>
         </div>
     </form>
+
 {% endblock %}

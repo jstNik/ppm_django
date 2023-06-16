@@ -7,8 +7,9 @@
 
 {% block content %}
     <div class="d-flex align-items-center mt-4">
-            <a href="{{ request.META.HTTP_REFERER }}">
-                <img src="/media/icons/back.png" alt="back" class="me-3 back-arrow"></a>
+            <button type="button" class="border-0 p-0 me-3" style="background: transparent" onclick="window.history.back()">
+                <img src="/media/icons/back.png" alt="back" class="me-3 back-arrow">
+            </button>
             <h1>Create an article</h1>
         </div>
     <form method="post"

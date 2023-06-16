@@ -14,46 +14,48 @@
 <div class="container-fluid position-relative g-0" id="upper-banner">
     <div class="container-xl d-flex justify-content-between align-items-center" style="height: 100%">
         <div class="d-flex justify-content-between align-items-center" style="flex-grow: 1">
-            {% if user.is_authenticated %}
-                <div>
-                    <a href="{% url 'articles:list' %}" class="text-decoration-none me-4 ms-4" style="color: white">Home</a>
-                    <a href="{% url 'articles:user_articles' %}?source={{ request.path }}" class="me-4 ms-4"
+            <div>
+                <a href="{% url 'articles:list' %}" class="text-decoration-none me-4 ms-4" style="color: white">Home</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'articles:user_articles' %}" class="me-4 ms-4"
                        style="color: white; text-decoration: none">Your articles</a>
-                </div>
-                <div class="d-flex">
+                {% endif %}
+            </div>
+            <div class="d-flex align-items-center">
+                {% if user.is_authenticated %}
                     <div class="dropdown ms-4">
-                        <button class="btn btn-secondary dropdown-toggle" style="height: 50px; background: transparent; border: 0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle"
+                                style="height: 50px; background: transparent; border: 0" type="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
                             <img src="{% if user.profile_picture %}{{ user.profile_picture.url }}{% else %}/media/pfps/default.png{% endif %}"
-                                 alt="Profile picture" id="profile-picture" class="rounded-circle" title="Logged in as {{ request.user.username }}">
+                                 alt="Profile picture" id="profile-picture" class="rounded-circle"
+                                 title="Logged in as {{ request.user.username }}">
                         </button>
                         <ul class="dropdown-menu" style="background: var(--banner-color); border: 1px white solid">
                             <li style="border-bottom: 1px white solid; background: var(--banner-color)">
-                                <a href="{% url 'accounts:your_profile' %}?source={{ request.path }}"
+                                <a href="{% url 'accounts:your_profile' %}"
                                    class="dropdown-item" style="color: white">Your profile</a>
                             </li>
                             <li>
                                 <form action="{% url 'accounts:logout' %}" method="post" class="dropdown-item">
                                     {% csrf_token %}
-                                    <input type="submit" value="Log out" style="border: 0; background: transparent; color: white">
+                                    <input type="submit" value="Log out"
+                                           style="border: 0; background: transparent; color: white">
                                 </form>
                             </li>
                         </ul>
                     </div>
-                    <a href="{% url 'articles:create' %}?source={{ request.path }}" id="add-article"
-                       class="d-flex align-items-center ms-4 me-4">
-                        <img src="/media/icons/plus.png" alt="Plus sign" id="plus" class="me-2 ms-4">
-                        Add article
+                {% endif %}
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'accounts:login' %}?next={{ request.path }}"
+                       class="text-decoration-none me-4 ms-4" style="color: white;">
+                        Log in
                     </a>
-                </div>
-            {% else %}
-                <a href="{% url 'accounts:login' %}?next={{ request.path }}"
-                   class="text-decoration-none me-4 ms-4" style="color: white;">
-                    Log in
-                </a>
+                {% endif %}
                 <a href="{% url 'articles:create' %}" id="add-article">
                     <img src="/media/icons/plus.png" alt="Plus sign" id="plus" class="me-2 ms-4">Add article
                 </a>
-            {% endif %}
+            </div>
         </div>
     </div>
 </div>

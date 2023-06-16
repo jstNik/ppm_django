@@ -9,7 +9,7 @@
             {% for article in articles %}
                 <li class="pt-3 pb-3 list-element">
                     <h1 class="h3">
-                        <a href="{% url 'articles:details' pk=article.pk slug=article.slug %}?source={{ request.path }}"
+                        <a href="{% url 'articles:details' pk=article.pk slug=article.slug %}"
                            class="list-title">{{ article.title }}
                         </a>
                     </h1>
@@ -46,7 +46,7 @@
                                 <span> - {{ article.postingDate|date:'d M Y' }} at {{ article.postingDate|time:'H:i' }}</span>
                             </div>
                             {% if article.isEdited %}
-                                <span>{{ article.lastEditDate|date:'d M Y' }} at {{ article.lastEditDate|time:'H:i' }}</span>
+                                <span>Last edit: {{ article.lastEditDate|date:'d M Y' }} at {{ article.lastEditDate|time:'H:i' }}</span>
                             {% endif %}
                         </div>
                     </div>

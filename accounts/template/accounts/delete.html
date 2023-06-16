@@ -13,8 +13,9 @@ Delete user
 {% block content %}
     <form method="post" class="d-flex flex-column justify-content-center align-items-center" style="flex-grow: 0.75">
         <div class="d-flex align-items-center mb-5">
-            <a href="{{ request.META.HTTP_REFERER }}">
-                <img src="/media/icons/back.png" alt="back" class="me-3 back-arrow"></a>
+            <button type="button" class="border-0 p-0 me-3" style="background: transparent" onclick="window.history.back()">
+                <img src="/media/icons/back.png" alt="back" class="me-3 back-arrow">
+            </button>
             <h1 class="text-danger">Are you sure to delete the account?</h1>
         </div>
         {% csrf_token %}
@@ -36,8 +37,11 @@ Delete user
             {% endif %}
         </div>
         <div class="d-flex">
-            <a href="{{ request.META.HTTP_REFERER }}"
-               class="text-decoration-none submit rounded-pill ms-auto me-3" style="color: var(--banner-color)">Cancel</a>
+            <button type="button" onclick="window.history.back()"
+                    class="text-decoration-none submit rounded-pill ms-auto me-3"
+                    style="color: var(--banner-color)">
+                Cancel
+            </button>
             <input type="submit" name="confirmed" value="Confirm" class="submit delete rounded-pill me-auto ms-3">
         </div>
     </form>

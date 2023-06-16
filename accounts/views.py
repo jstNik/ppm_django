@@ -111,7 +111,7 @@ class AccountEditView(LoginRequiredMixin, UpdateView):
             if self.kwargs.get('username') == request.user or request.user.is_superuser:
                 return super().post(self, request, *args, **kwargs)
             return redirect('accounts:profile', username=self.kwargs.get('username'))
-        return redirect('accounts:your_profile')
+        return super().post(self, request, *args, **kwargs)
 
 
 class AccountChangePassword(LoginRequiredMixin, PasswordChangeView):
